@@ -158,9 +158,18 @@ h3 {
 
 /* Centralizar o conteúdo */
 .container {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center; /* Centraliza horizontalmente */
 
+}
+
+.container {
+    margin-bottom: 0; /* Evita espaços extras abaixo */
+}
+
+section {
+    margin-top: 0; /* Evita espaços extras acima */
 }
 
