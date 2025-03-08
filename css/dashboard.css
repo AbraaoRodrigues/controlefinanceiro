@@ -1,0 +1,77 @@
+.dashboard {
+    padding: 20px;
+    text-align: center;
+}
+
+.indicadores {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.card {
+    width: 200px;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+.card.entrada { background-color: green; }
+.card.saida { background-color: red; }
+.card.saldo { background-color: blue; }
+.card.vencimentos { background-color: orange; }
+
+.graficos-container {
+    display: flex;
+    justify-content: space-between; /* Mantém os gráficos lado a lado */
+    align-items: center; /* Alinha os gráficos verticalmente */
+    flex-wrap: wrap; /* Permite quebra de linha se a tela for pequena */
+    gap: 20px; /* Espaço entre os gráficos */
+    margin-top: 20px;
+}
+
+.grafico-box {
+    flex: 1; /* Faz com que os gráficos ocupem o mesmo espaço */
+    max-width: 48%; /* Garante que fiquem lado a lado sem ultrapassar */
+    display: flex;
+    justify-content: center; /* Centraliza o gráfico dentro do box */
+    align-items: center;
+}
+
+canvas {
+    width: 100%; /* Garante que os gráficos respeitem o tamanho do container */
+    height: auto; /* Mantém a proporção */
+    max-width: 400px; /* Define um tamanho máximo para evitar distorções */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+}
+
+.atalhos {
+    margin-top: 20px;
+}
+
+.atalhos button {
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
