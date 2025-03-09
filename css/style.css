@@ -173,3 +173,8 @@ section {
     margin-top: 0; /* Evita espaços extras acima */
 }
 
+.header-info{
+    font-size:18px;
+    font-weight: bold;
+    font-family: arial;
+}

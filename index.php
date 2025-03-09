@@ -3,6 +3,11 @@
 include 'includes/header.php'; 
 include 'includes/verifica_login.php';
 
+session_start();
+
+// Se não estiver logado, $_SESSION['nome_usuario'] pode não existir
+$nomeExibicao = isset($_SESSION['usuario_nome']) ? $_SESSION['usuario_nome'] : 'Visitante';
+
 ?>
 
 <!DOCTYPE html>
@@ -15,10 +20,27 @@ include 'includes/verifica_login.php';
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Inclua o plugin depois do script principal do Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <script src="../js/chart.js"></script>
 </head>
 <body>
+    
+    <div class="header-info">
+   <p>Olá, <?php echo htmlspecialchars($nomeExibicao); ?>!</p>
+</div>
+    
 <div class="dashboard">
+    <form id="filtro-form" style="margin-bottom: 20px;">
+    <label for="data-inicio">Data Início:</label>
+    <input type="date" id="data-inicio" name="data_inicio">
+
+    <label for="data-fim">Data Fim:</label>
+    <input type="date" id="data-fim" name="data_fim">
+
+    <button type="submit">Filtrar</button>
+</form>
+
     <h2>Visão Geral Financeira</h2>
 
     <!-- Indicadores Principais -->

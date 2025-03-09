@@ -17,5 +17,6 @@
                     <a href="/pages/categorias.php">🏷️ Categorias</a>
                 </div>
             </li>
+            <li><a href="../backend/logout.php">Sair</a></li>
         </ul>
     </nav>

@@ -2,8 +2,8 @@
 require_once '../includes/conexao.php'; // Conexão com o banco de dados
 
 // Dados do usuário
-$email = 'abraaoisrael@gmail.com'; // Email do usuário que será atualizado
-$senha_plana = '1a2b3c45';    // Nova senha para o usuário
+$email = 'renataplacidelli@gmail.com'; // Email do usuário que será atualizado
+$senha_plana = 'Superpla300890';    // Nova senha para o usuário
 
 // Gera o hash da senha
 $senha_hash = password_hash($senha_plana, PASSWORD_DEFAULT);
