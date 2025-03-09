@@ -5,62 +5,125 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Carregando dados para os gráficos...");
 
     fetch("../backend/dados_graficos.php")
-        .then(response => response.json())
-        .then(data => {
-            // 1️⃣ Gráfico de Barras (Evolução de Entradas e Saídas)
-            var ctxBarras = document.getElementById("graficoBarras").getContext("2d");
+    .then(response => response.json())
+    .then(data => {
+        // data.meses, data.entradas e data.saidas
+        // data.categorias, data.valores
+        
+        // 1️⃣ Atualizar Indicadores
+      // Formatar como moeda (opcional)
+      const formatBRL = valor => valor.toLocaleString("pt-BR", {
+        style: "currency", currency: "BRL"
+      });
 
-            // Se já existir um gráfico, destruí-lo antes de recriar
-            if (chartBarras) {
-                chartBarras.destroy();
-            }
+      document.getElementById("total-entrada").textContent = formatBRL(data.total_entradas);
+      document.getElementById("total-saida").textContent   = formatBRL(data.total_saidas);
+      document.getElementById("saldo-atual").textContent   = formatBRL(data.saldo_atual);
+      document.getElementById("total-vencer").textContent  = formatBRL(data.total_vencer);
 
-            chartBarras = new Chart(ctxBarras, {
-                type: "bar",
-                data: {
-                    labels: data.meses,
-                    datasets: [
-                        {
-                            label: "Entradas",
-                            data: data.entradas,
-                            backgroundColor: "green"
-                        },
-                        {
-                            label: "Saídas",
-                            data: data.saidas,
-                            backgroundColor: "red"
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
+        // Gráfico de Barras
+        const ctxBarras = document.getElementById("graficoBarras").getContext("2d");
+        if (chartBarras) { chartBarras.destroy(); }
+        chartBarras = new Chart(ctxBarras, {
+            type: "bar",
+            data: {
+                labels: data.meses,
+                datasets: [
+                    {
+                        label: "Entradas",
+                        data: data.entradas,
+                        backgroundColor: "green"
+                    },
+                    {
+                        label: "Saídas",
+                        data: data.saidas,
+                        backgroundColor: "red"
+                    }
+                ]
+            },
+            options: {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        // Configurações de plugins e legendas
+        plugins: {
+            legend: {
+                labels: {
+                    font: {
+                        size: 14,    // Tamanho da fonte das legendas
+                        family: 'Arial'
+                    }
                 }
-            });
-
-            // 2️⃣ Gráfico de Pizza (Distribuição de Gastos por Categoria)
-            var ctxPizza = document.getElementById("graficoPizza").getContext("2d");
-
-            // Se já existir um gráfico, destruí-lo antes de recriar
-            if (chartPizza) {
-                chartPizza.destroy();
-            }
-
-            chartPizza = new Chart(ctxPizza, {
-                type: "pie",
-                data: {
-                    labels: data.categorias,
-                    datasets: [{
-                        data: data.valores,
-                        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4CAF50", "#9966FF", "#8A2BE2"]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
+            },
+            title: {
+                display: true,
+                text: 'Evolução de Entradas e Saídas',
+                font: {
+                    size: 14,
+                    family: 'Arial'
                 }
-            });
+            }
+        },
+        
+        // Configurações dos eixos
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 13,   // Tamanho da fonte dos rótulos do eixo X
+                        family: 'Arial'
+                    }
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 13,   // Tamanho da fonte dos rótulos do eixo Y
+                        family: 'Arial'
+                    }
+                }
+            }
+        }
+    }
+});
 
-        })
-        .catch(error => console.error("Erro ao carregar os dados:", error));
+        // Gráfico de Pizza
+        const ctxPizza = document.getElementById("graficoPizza").getContext("2d");
+        if (chartPizza) { chartPizza.destroy(); }
+        chartPizza = new Chart(ctxPizza, {
+            type: "pie",
+            data: {
+                labels: data.categorias,
+                datasets: [{
+                    data: data.valores,
+                    // Cores que você achar melhor
+                    backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4CAF50"]
+                }]
+            },
+           options: {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+            legend: {
+                labels: {
+                    font: {
+                        size: 14,
+                        family: 'Arial'
+                    }
+                }
+            },
+            title: {
+                display: true,
+                text: 'Distribuição por Categoria',
+                font: {
+                    size: 16,
+                    family: 'Arial'
+                }
+            }
+        }
+    }
+});
+    })
+    .catch(error => console.error("Erro ao carregar os dados:", error));
 });

@@ -1,49 +1,78 @@
 <?php
 header("Content-Type: application/json");
-include("../includes/conexao.php"); // Ajuste o caminho conforme necessário
+include_once "../includes/conexao.php";
 
-// 1️⃣ Consultar entradas e saídas por mês
-$sql_barras = "SELECT DATE_FORMAT(data, '%M') AS mes, 
-               SUM(CASE WHEN tipo = 'Receita' THEN valor ELSE 0 END) AS Receita,
-               SUM(CASE WHEN tipo = 'Despesa' THEN valor ELSE 0 END) AS Despesa
-        FROM transacoes
-        GROUP BY mes
-        ORDER BY STR_TO_DATE(mes, '%M')";
+// Seta localidade para datas em português (opcional, para formatar nomes de meses):
+$pdo->query("SET lc_time_names = 'pt_BR'");
 
-$result_barras = $conn->query($sql_barras);
+// 1) Consulta para indicadores
+$sql_indicadores = "
+    SELECT 
+      (SELECT IFNULL(SUM(t.valor),0) FROM transacoes t WHERE t.tipo = 'Receita') AS total_entradas,
+      (SELECT IFNULL(SUM(t.valor),0) FROM transacoes t WHERE t.tipo = 'Despesa') AS total_saidas,
+      (SELECT IFNULL(SUM(t.valor),0) FROM transacoes t WHERE t.status = 'Pendente') AS total_vencer
+";
+$stmtInd = $pdo->query($sql_indicadores);
+$indic = $stmtInd->fetch(PDO::FETCH_ASSOC);
+$saldo_atual = $indic['total_entradas'] - $indic['total_saidas'];
+
+// 2) Consulta para gráfico de barras
+$sql_barras = "
+    SELECT 
+        DATE_FORMAT(data, '%M') AS mes,
+        SUM(CASE WHEN tipo = 'Receita' THEN valor ELSE 0 END) AS total_receita,
+        SUM(CASE WHEN tipo = 'Despesa' THEN valor ELSE 0 END) AS total_despesa
+    FROM transacoes
+    GROUP BY DATE_FORMAT(data, '%Y-%m')
+    ORDER BY MIN(data)
+";
+$stmtBarras = $pdo->query($sql_barras);
+
 $meses = [];
 $entradas = [];
 $saidas = [];
 
-while ($row = $result_barras->fetch_assoc()) {
-    $meses[] = ucfirst($row["mes"]); // Capitalizar o nome do mês
-    $entradas[] = (float)$row["entradas"];
-    $saidas[] = (float)$row["saidas"];
+while ($row = $stmtBarras->fetch(PDO::FETCH_ASSOC)) {
+    $meses[]    = ucfirst($row['mes']); // 'janeiro', 'fevereiro' etc.
+    $entradas[] = (float)$row['total_receita'];
+    $saidas[]   = (float)$row['total_despesa'];
 }
 
-// 2️⃣ Consultar categorias de gastos para o gráfico de pizza
-$sql_pizza = "SELECT categoria, SUM(valor) AS total 
-              FROM categorias 
-              WHERE tipo = 'Receita' 
-              GROUP BY categoria";
+// 3) Consulta para gráfico de pizza (ex: despesas por categoria)
+$sql_pizza = "
+    SELECT c.categoria, SUM(t.valor) AS total
+    FROM transacoes t
+    JOIN categorias c ON t.categoria_id = c.id
+    WHERE t.tipo = 'Despesa'
+    GROUP BY c.categoria
+    ORDER BY total DESC
+";
+$stmtPizza = $pdo->query($sql_pizza);
 
-$result_pizza = $conn->query($sql_pizza);
 $categorias = [];
 $valores = [];
 
-while ($row = $result_pizza->fetch_assoc()) {
-    $categorias[] = $row["categoria"];
-    $valores[] = (float)$row["total"];
+while ($row = $stmtPizza->fetch(PDO::FETCH_ASSOC)) {
+    $categorias[] = $row['categoria'];
+    $valores[]    = (float)$row['total'];
 }
 
-// Retornar os dados em JSON
-echo json_encode([
-    "meses" => $meses,
-    "entradas" => $entradas,
-    "saidas" => $saidas,
-    "categorias" => $categorias,
-    "valores" => $valores
-]);
+// 4) Montar JSON
+$data = [
+    // Indicadores
+    'total_entradas' => (float)$indic['total_entradas'],
+    'total_saidas'   => (float)$indic['total_saidas'],
+    'saldo_atual'    => (float)$saldo_atual,
+    'total_vencer'   => (float)$indic['total_vencer'],
 
-$conn->close();
-?>
+    // Dados de barras
+    'meses'    => $meses,
+    'entradas' => $entradas,
+    'saidas'   => $saidas,
+
+    // Dados de pizza
+    'categorias' => $categorias,
+    'valores'    => $valores
+];
+
+echo json_encode($data);

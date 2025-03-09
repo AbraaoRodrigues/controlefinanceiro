@@ -25,25 +25,26 @@
 
 .graficos-container {
     display: flex;
-    justify-content: space-between; /* Mantém os gráficos lado a lado */
-    align-items: center; /* Alinha os gráficos verticalmente */
-    flex-wrap: wrap; /* Permite quebra de linha se a tela for pequena */
-    gap: 20px; /* Espaço entre os gráficos */
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
     margin-top: 20px;
 }
 
 .grafico-box {
-    flex: 1; /* Faz com que os gráficos ocupem o mesmo espaço */
-    max-width: 48%; /* Garante que fiquem lado a lado sem ultrapassar */
+    flex: 1;               /* Faz cada box crescer igualmente */
+    min-width: 400px;      /* Não fique menor que 400px */
+    min-height: 400px;     /* Não fique menor que 400px */
     display: flex;
-    justify-content: center; /* Centraliza o gráfico dentro do box */
+    justify-content: center;
     align-items: center;
+    border: 1px solid #ddd; /* Opcional */
 }
 
-canvas {
-    width: 100%; /* Garante que os gráficos respeitem o tamanho do container */
-    height: auto; /* Mantém a proporção */
-    max-width: 400px; /* Define um tamanho máximo para evitar distorções */
+/* Para o canvas preencher todo o container */
+.grafico-box canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 table {

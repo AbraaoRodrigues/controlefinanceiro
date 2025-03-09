@@ -3,7 +3,7 @@ table {
     width: 90%;
     max-width: 800px;
     border-collapse: collapse;
-    margin: 20px auto;
+    margin: 150px auto;
     background-color: white;
     border-radius: 8px;
     overflow: hidden;
@@ -55,7 +55,16 @@ tbody td {
 }
 
 section {
-    margin-top: 10px;
+    margin-top: -20px;
     padding-top: 0;
 }
 
+h1 {
+  margin-top: 30; 
+  margin-bottom: 10px; /* ajusta conforme desejar */
+}
+
+form #form-categoria {
+  margin-bottom: 0; /* se estiver com margem padrão */
+  padding: 0;       /* se houver padding padrão */
+}
