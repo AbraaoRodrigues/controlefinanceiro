@@ -59,7 +59,40 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("total-saida").textContent   = formatBRL(data.total_saidas);
         document.getElementById("saldo-atual").textContent   = formatBRL(data.saldo_atual);
         document.getElementById("total-vencer").textContent  = formatBRL(data.total_vencer);
-    }
+        document.getElementById("total-vencido").textContent  = formatBRL(data.total_vencido);
+        
+        // Agora preenchemos a tabela de próximos vencimentos
+    const tbody = document.getElementById("lista-vencimentos");
+    tbody.innerHTML = ""; // limpa a tabela antes de inserir
+
+    data.proximos.forEach(item => {
+        // item.data, item.descricao, item.valor, item.status
+        const tr = document.createElement("tr");
+
+        // Cria as células
+        const tdData = document.createElement("td");
+        tdData.textContent = item.data; // Ex: "12/03/2025"
+        
+        const tdDesc = document.createElement("td");
+        tdDesc.textContent = item.descricao;
+
+        const tdValor = document.createElement("td");
+        // se quiser formatar no front:
+        tdValor.textContent = formatBRL(parseFloat(item.valor));
+
+        const tdStatus = document.createElement("td");
+        tdStatus.textContent = item.status;
+
+        // anexa as células
+        tr.appendChild(tdData);
+        tr.appendChild(tdDesc);
+        tr.appendChild(tdValor);
+        tr.appendChild(tdStatus);
+
+        // adiciona a linha no tbody
+        tbody.appendChild(tr);
+    });
+}
 
     /**
      * Atualiza os gráficos de barras e pizza
@@ -92,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     legend: {
                         labels: {
                             font: {
-                                size: 14,
+                                size: 18,
                                 family: 'Arial'
                             }
                         }
@@ -101,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         display: true,
                         text: 'Evolução de Entradas e Saídas',
                         font: {
-                            size: 14,
+                            size: 18,
                             family: 'Arial'
                         }
                     }
@@ -110,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     x: {
                         ticks: {
                             font: {
-                                size: 13,
+                                size: 18,
                                 family: 'Arial'
                             }
                         }

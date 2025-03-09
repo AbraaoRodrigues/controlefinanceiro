@@ -61,6 +61,10 @@ $nomeExibicao = isset($_SESSION['usuario_nome']) ? $_SESSION['usuario_nome'] : '
             <h3>A Vencer</h3>
             <p>R$ <span id="total-vencer">0,00</span></p>
         </div>
+        <div class="card vencidos">
+        <h3>Vencidos</h3>
+        <p>R$ <span id="total-vencido">0,00</span></p>
+    </div>
     </div>
 
     <!-- Gráficos -->

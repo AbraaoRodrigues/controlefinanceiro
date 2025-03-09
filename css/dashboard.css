@@ -22,6 +22,7 @@
 .card.saida { background-color: red; }
 .card.saldo { background-color: blue; }
 .card.vencimentos { background-color: orange; }
+.card.vencidos { background-color: yellow; color: red;}
 
 .graficos-container {
     display: flex;
@@ -33,8 +34,8 @@
 
 .grafico-box {
     flex: 1;               /* Faz cada box crescer igualmente */
-    min-width: 400px;      /* Não fique menor que 400px */
-    min-height: 400px;     /* Não fique menor que 400px */
+    min-width: 350px;      /* Não fique menor que 400px */
+    min-height: 350px;     /* Não fique menor que 400px */
     display: flex;
     justify-content: center;
     align-items: center;

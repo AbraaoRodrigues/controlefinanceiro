@@ -8,11 +8,11 @@ include_once "../includes/conexao.php";
 
 $pdo->query("SET lc_time_names = 'pt_BR'");
 
-// Recebe os parâmetros de data via GET
+// Filtro de data (caso esteja usando):
 $dataInicio = isset($_GET['inicio']) ? $_GET['inicio'] : '';
 $dataFim    = isset($_GET['fim'])    ? $_GET['fim'] : '';
 
-// Monta where partindo de WHERE 1=1
+/** 1) Montar WHERE principal **/
 $whereSQL = "WHERE 1=1";
 if (!empty($dataInicio)) {
     $whereSQL .= " AND t.data >= :dataInicio";
@@ -21,18 +21,18 @@ if (!empty($dataFim)) {
     $whereSQL .= " AND t.data <= :dataFim";
 }
 
-// 1) Consulta para indicadores
-// Aqui, exemplificando, mas usando subqueries e levando em conta o $whereSQL:
-
-$sql_indicadores = "
+/** 2) Indicadores (Entradas, Saídas, etc.) **/
+$sql_indic = "
     SELECT 
        SUM(CASE WHEN t.tipo = 'Receita' THEN t.valor ELSE 0 END) AS total_entradas,
        SUM(CASE WHEN t.tipo = 'Despesa' THEN t.valor ELSE 0 END) AS total_saidas,
-       SUM(CASE WHEN t.status = 'Pendente' THEN t.valor ELSE 0 END) AS total_vencer
+       SUM(CASE WHEN t.status = 'Pendente' AND t.data >= CURDATE() THEN t.valor ELSE 0 END) AS total_vencer,
+       SUM(CASE WHEN t.status = 'Pendente' AND t.data < CURDATE()  THEN t.valor ELSE 0 END) AS total_vencido
     FROM transacoes t
     $whereSQL
 ";
-$stmtInd = $pdo->prepare($sql_indicadores);
+$stmtInd = $pdo->prepare($sql_indic);
+// bindValue se tiver dataInicio/dataFim
 if (!empty($dataInicio)) $stmtInd->bindValue(':dataInicio', $dataInicio);
 if (!empty($dataFim))    $stmtInd->bindValue(':dataFim', $dataFim);
 $stmtInd->execute();
@@ -42,10 +42,37 @@ $indic = $stmtInd->fetch(PDO::FETCH_ASSOC);
 $total_entradas = (float)$indic['total_entradas'];
 $total_saidas   = (float)$indic['total_saidas'];
 $total_vencer   = (float)$indic['total_vencer'];
+$total_vencido  = (float)$indic['total_vencido'];
+
 $saldo_atual    = $total_entradas - $total_saidas;
 
+/** 3) Lista de próximos vencimentos (transações pendentes e data >= hoje) **/
+$sql_proximos = "
+    SELECT t.id, t.data, t.descricao, t.valor, t.status
+    FROM transacoes t
+    $whereSQL
+    AND t.status = 'Pendente'
+    AND t.data >= CURDATE()
+    ORDER BY t.data ASC
+    LIMIT 10
+";
+$stmtProx = $pdo->prepare($sql_proximos);
+if (!empty($dataInicio)) $stmtProx->bindValue(':dataInicio', $dataInicio);
+if (!empty($dataFim))    $stmtProx->bindValue(':dataFim', $dataFim);
+$stmtProx->execute();
 
-// 2) Consulta para gráfico de barras
+$proximos = [];
+while ($row = $stmtProx->fetch(PDO::FETCH_ASSOC)) {
+    // Formatando data (opcional) ou manda crua
+    $row['data'] = date('d/m/Y', strtotime($row['data']));
+
+    // Pode também formatar valor aqui, ou formatar em JS
+    // $row['valor'] = number_format($row['valor'], 2, ',', '.');
+
+    $proximos[] = $row;
+}
+
+/** 4) Dados do gráfico de barras **/
 $sql_barras = "
     SELECT 
         DATE_FORMAT(t.data, '%M') AS mes,
@@ -59,9 +86,7 @@ $sql_barras = "
 $stmtBarras = $pdo->prepare($sql_barras);
 if (!empty($dataInicio)) $stmtBarras->bindValue(':dataInicio', $dataInicio);
 if (!empty($dataFim))    $stmtBarras->bindValue(':dataFim', $dataFim);
-
 $stmtBarras->execute();
-
 
 $meses = [];
 $entradas = [];
@@ -73,7 +98,7 @@ while ($row = $stmtBarras->fetch(PDO::FETCH_ASSOC)) {
     $saidas[]   = (float)$row['total_despesa'];
 }
 
-// 3) Consulta para gráfico de pizza (ex: despesas por categoria)
+/** 5) Dados do gráfico de pizza (despesas por categoria) **/
 $sql_pizza = "
     SELECT c.categoria, SUM(t.valor) AS total
     FROM transacoes t
@@ -86,9 +111,7 @@ $sql_pizza = "
 $stmtPizza = $pdo->prepare($sql_pizza);
 if (!empty($dataInicio)) $stmtPizza->bindValue(':dataInicio', $dataInicio);
 if (!empty($dataFim))    $stmtPizza->bindValue(':dataFim', $dataFim);
-
 $stmtPizza->execute();
-
 
 $categorias = [];
 $valores = [];
@@ -98,17 +121,26 @@ while ($row = $stmtPizza->fetch(PDO::FETCH_ASSOC)) {
     $valores[]    = (float)$row['total'];
 }
 
-// 4) Montar JSON final
+/** 6) Monta o objeto final e retorna JSON **/
 $dataOut = [
-    'total_entradas' => (float)$indic['total_entradas'],
-    'total_saidas'   => (float)$indic['total_saidas'],
-    'saldo_atual'    => (float)$saldo_atual,
-    'total_vencer'   => (float)$indic['total_vencer'],
-    'meses'          => $meses,
-    'entradas'       => $entradas,
-    'saidas'         => $saidas,
-    'categorias'     => $categorias,
-    'valores'        => $valores
+    // Indicadores
+    'total_entradas' => $total_entradas,
+    'total_saidas'   => $total_saidas,
+    'saldo_atual'    => $saldo_atual,
+    'total_vencer'   => $total_vencer,
+    'total_vencido'  => $total_vencido,
+
+    // BARRAS
+    'meses'    => $meses,
+    'entradas' => $entradas,
+    'saidas'   => $saidas,
+
+    // PIZZA
+    'categorias' => $categorias,
+    'valores'    => $valores,
+
+    // LISTA de próximos vencimentos
+    'proximos' => $proximos
 ];
 
 echo json_encode($dataOut);
