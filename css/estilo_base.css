@@ -1,0 +1,59 @@
+
+body {
+    background-color: #f8f9fa;
+}
+
+/* Efeito sutil ao passar o mouse nos cards */
+.card {
+    transition: transform 0.2s ease;
+}
+.card:hover {
+    transform: scale(1.02);
+}
+
+/* Rodapé com separação discreta */
+footer {
+    border-top: 1px solid #ddd;
+    padding: 10px 0;
+    background-color: #fff;
+}
+
+/* Tabela com hover e melhor leitura */
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Modal padding responsivo */
+.modal-body {
+    padding: 1.5rem;
+}
+
+/* Ajustes finos para formulário */
+form .form-label {
+    font-weight: 500;
+}
+form .form-control, form .form-select {
+    border-radius: 6px;
+}
+
+/* Botões em tabelas */
+.table button {
+    min-width: 80px;
+}
+
+/* Espaçamento em páginas */
+main.container {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+}
+
+/* Cabeçalhos */
+h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+}

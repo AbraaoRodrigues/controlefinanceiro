@@ -1,0 +1,40 @@
+Array
+(
+    [id] => 
+    [descricao] => Fisioterapia
+    [tipo_lancamento] => Receita
+    [categoria_id] => 2
+    [valor] => 150,00
+    [data] => 2025-05-19
+    [status] => Pendente
+)
+Array
+(
+    [id] => 
+    [descricao] => Fisioterapia
+    [tipo_lancamento] => Receita
+    [categoria_id] => 2
+    [valor] => 150,00
+    [data] => 2025-05-19
+    [status] => Pago
+)
+Array
+(
+    [id] => 8
+    [descricao] => Roupas gerais
+    [tipo] => Despesa
+    [categoria_id] => 2
+    [valor] => 390,00
+    [data] => 2025-05-24
+    [status] => Pago
+)
+Array
+(
+    [id] => 
+    [descricao] => Fisioterapia
+    [tipo] => Receita
+    [categoria_id] => 4
+    [valor] => 150,00
+    [data] => 2025-05-26
+    [status] => Pendente
+)
