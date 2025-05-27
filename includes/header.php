@@ -6,7 +6,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 <!-- Menu superior -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="#">Financeiro</a>
+    <a class="navbar-brand fw-bold" href="index.php">Financeiro</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
