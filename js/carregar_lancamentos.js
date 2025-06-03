@@ -22,13 +22,23 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function carregarLancamentos(filtros = {}) {
+  // Define intervalo padrão se não informado: 15 dias antes e depois
+  if (!filtros.inicio || !filtros.fim) {
+    const hoje = new Date();
+    const inicio = new Date(hoje);
+    const fim = new Date(hoje);
+    inicio.setDate(inicio.getDate() - 15);
+    fim.setDate(fim.getDate() + 15);
+
+    filtros.inicio = inicio.toISOString().split("T")[0];
+    filtros.fim = fim.toISOString().split("T")[0];
+  }
+
   const params = new URLSearchParams(filtros);
 
   fetch(`backend/buscar_lancamentos.php?${params.toString()}`)
     .then(response => response.json())
     .then(data => {
-      console.log("Dados recebidos:", data);
-
       const tbody = document.getElementById("tabela-lancamentos");
       tbody.innerHTML = "";
 
@@ -67,6 +77,7 @@ function carregarLancamentos(filtros = {}) {
     });
 }
 
+
 function carregarCategoriasNoFormulario(tipo) {
   fetch("backend/categorias_controller.php", {
     method: "POST",
@@ -101,3 +112,26 @@ function carregarCategoriasNoFormulario(tipo) {
       });
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const selectConta = document.getElementById('conta_id');
+  if (!selectConta) return;
+
+  fetch('backend/contas_controller.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'acao=buscar'
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) return;
+      data.dados.forEach(conta => {
+        if (conta.status === 'Ativa') {
+          const option = document.createElement('option');
+          option.value = conta.id;
+          option.textContent = `${conta.nome_conta} (${conta.banco})`;
+          selectConta.appendChild(option);
+        }
+      });
+    });
+});

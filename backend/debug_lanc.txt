@@ -38,3 +38,14 @@ Array
     [data] => 2025-05-26
     [status] => Pendente
 )
+Array
+(
+    [id] => 
+    [descricao] => Testando os lançamentos
+    [tipo] => Receita
+    [categoria_id] => 4
+    [conta_id] => 1
+    [valor] => R$ 150,00
+    [data] => 2025-06-04
+    [status] => Pendente
+)

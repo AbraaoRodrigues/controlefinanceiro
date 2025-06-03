@@ -33,7 +33,9 @@ session_start();
     <div class="card mb-4 shadow-sm">
       <div class="card-header d-flex justify-content-between align-items-center">
         <strong>Filtros</strong>
-        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosAvancados">
+        <button class="btn btn-sm btn-outline-secondary" type="button"
+          data-bs-toggle="collapse" data-bs-target="#filtrosAvancados"
+          aria-expanded="true" aria-controls="filtrosAvancados">
           Minimizar
         </button>
       </div>

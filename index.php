@@ -14,41 +14,7 @@
   <?php include 'includes/header.php'; ?>
   <!-- Conteúdo -->
   <main class="container my-4 flex-grow-1">
-    <h2 class="mb-4">Resumo Financeiro</h2>
-    <div class="row g-3">
-      <div class="col-md-3">
-        <div class="card border-success shadow-sm">
-          <div class="card-body text-success">
-            <h5 class="card-title">Entradas</h5>
-            <p class="fs-4 fw-bold">R$ 0,00</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card border-danger shadow-sm">
-          <div class="card-body text-danger">
-            <h5 class="card-title">Saídas</h5>
-            <p class="fs-4 fw-bold">R$ 0,00</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card border-primary shadow-sm">
-          <div class="card-body text-primary">
-            <h5 class="card-title">Saldo</h5>
-            <p class="fs-4 fw-bold">R$ 0,00</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card border-warning shadow-sm">
-          <div class="card-body text-warning">
-            <h5 class="card-title">Pendentes</h5>
-            <p class="fs-4 fw-bold">R$ 0,00</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <?php include 'dashboard.php'; ?>
   </main>
 
   <!-- Rodapé -->

@@ -27,7 +27,7 @@ if ($dataFim) {
   $where[] = "l.data <= :dataFim";
   $params[':dataFim'] = $dataFim;
 }
-if ($categoria) {
+if (!is_null($categoria) && $categoria !== '' && $categoria !== '0') {
   $where[] = "l.categoria_id = :categoria";
   $params[':categoria'] = $categoria;
 }
